@@ -1,15 +1,16 @@
 import java.util.Scanner;
-
 public class Main {
-    static void main() {
-        IO.println("Welcome Back!!");
+    public static void main(String[] args) {
+        System.out.println("Welcome Back!!");
         Motorcycle myMotorcycle = new Motorcycle("Suzuki", "GIXXER SF FI 150 ABS", 2027, 12690000);
         myMotorcycle.displayInfo();
 
         bucleWhile x = new bucleWhile();
         forPractice y = new forPractice();
+        bucleAnidado z = new bucleAnidado();
         bucleWhile.prueba();
         forPractice.prueba();
+        bucleAnidado.prueba();
 
     }
     static class condicional {
@@ -55,6 +56,28 @@ public class Main {
             for (int i = 1; i <= 10;) {
                 System.out.println("Hello World! " + i);
                 i++;
+            }
+        }
+    }
+
+    static class bucleAnidado{
+        static void prueba() {
+            Scanner input = new Scanner(System.in);
+            int filas;
+            System.out.print("Enter the number of rows: ");
+            filas = input.nextInt();
+            int columnas;
+            System.out.print("Enter the number of columns: ");
+            columnas = input.nextInt();
+            String Simbolo;
+            System.out.print("Enter the symbol to use: ");
+            Simbolo = input.next();
+
+            for (int i = 1; i <= filas; i++) {
+                for (int j = 1; j <= columnas; j++) {
+                    System.out.print(Simbolo);
+                }
+                System.out.println();
             }
         }
     }
