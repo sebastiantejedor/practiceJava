@@ -1,17 +1,15 @@
 import java.util.Scanner;
+import java.util.ArrayList;
 public class Main {
     public static void main(String[] args) {
         System.out.println("Welcome Back!!");
         Motorcycle myMotorcycle = new Motorcycle("Suzuki", "GIXXER SF FI 150 ABS", 2027, 12690000);
         myMotorcycle.displayInfo();
 
-        bucleWhile x = new bucleWhile();
-        forPractice y = new forPractice();
-        bucleAnidado z = new bucleAnidado();
-        bucleWhile.prueba();
-        forPractice.prueba();
-        bucleAnidado.prueba();
-
+        condicional.prueba();
+        ArrayListPractice.prueba();
+        hola("Sebastian");
+        
     }
     static class condicional {
         static void prueba() {
@@ -80,5 +78,25 @@ public class Main {
                 System.out.println();
             }
         }
+    }
+
+    static class ArrayListPractice{
+        static void prueba() {
+
+        ArrayList<String> names = new ArrayList<String>();
+
+        names.add("Dayana");
+        names.add("Alvaro");
+        names.add("Sebastian");
+
+            for (String i : names) {
+                System.out.println(i);
+            }
+
+        }
+    }
+
+    static void hola(String name) {
+        System.out.println("Hola, " + name + "!");
     }
 }
