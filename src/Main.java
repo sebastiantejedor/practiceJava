@@ -6,10 +6,8 @@ public class Main {
         Motorcycle myMotorcycle = new Motorcycle("Suzuki", "GIXXER SF FI 150 ABS", 2027, 12690000);
         myMotorcycle.displayInfo();
 
-        condicional.prueba();
-        ArrayListPractice.prueba();
-        hola("Sebastian");
-        
+        // Call the overloaded methods
+        int result = suma(5, 10, 15, 5);
     }
     static class condicional {
         static void prueba() {
@@ -80,6 +78,7 @@ public class Main {
         }
     }
 
+    // ArrayList practice
     static class ArrayListPractice{
         static void prueba() {
 
@@ -88,6 +87,7 @@ public class Main {
         names.add("Dayana");
         names.add("Alvaro");
         names.add("Sebastian");
+        names.add("Santiago");
 
             for (String i : names) {
                 System.out.println(i);
@@ -98,5 +98,19 @@ public class Main {
 
     static void hola(String name) {
         System.out.println("Hola, " + name + "!");
+    }
+
+    // Overloaded methods for summation
+    static int suma(int a, int b) {
+        System.out.printf("The sum of %d and %d is: %d\n", a, b, a + b);
+        return a + b;
+    }
+    static int suma(int a, int b, int c) {
+        System.out.printf("The sum of %d, %d, and %d is: %d\n", a, b, c, a + b + c);
+        return a + b + c;
+    }
+    static int suma(int a, int b, int c, int d) {
+        System.out.printf("The sum of %d, %d, %d, and %d is: %d\n", a, b, c, d, a + b + c + d);
+        return a + b + c + d;
     }
 }
