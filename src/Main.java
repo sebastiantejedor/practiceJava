@@ -3,11 +3,18 @@ import java.util.ArrayList;
 public class Main {
     public static void main(String[] args) {
         System.out.println("Welcome Back!!");
-        Motorcycle myMotorcycle = new Motorcycle("Suzuki", "GIXXER SF FI 150 ABS", 2027, 12690000);
-        myMotorcycle.displayInfo();
+        // Motorcycle myMotorcycle = new Motorcycle("Suzuki", "GIXXER SF FI 150 ABS", 2027, 12690000);
+        // myMotorcycle.displayInfo();
 
         // Call the overloaded methods
         int result = suma(5, 10, 15, 5);
+
+        Student myStudent = new Student();
+        myStudent.name = "Sebastian";
+        myStudent.code = 7502610039L;
+        myStudent.age = 17;
+        myStudent.semester = "2th";
+        myStudent.displayInfo();
     }
     static class condicional {
         static void prueba() {
@@ -113,4 +120,4 @@ public class Main {
         System.out.printf("The sum of %d, %d, %d, and %d is: %d\n", a, b, c, d, a + b + c + d);
         return a + b + c + d;
     }
-}
+} 
