@@ -1,3 +1,5 @@
+package JavaSwing;
+
 import javax.swing.*;
 
 public class UISwing {

@@ -1,3 +1,5 @@
+package POO;
+
 public class Humano {
     String nombre;
     int edad;

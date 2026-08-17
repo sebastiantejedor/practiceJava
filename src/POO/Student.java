@@ -1,3 +1,5 @@
+package POO;
+
 public class Student {
     String name;
     long code;
@@ -5,7 +7,7 @@ public class Student {
     String semester;
 
     void displayInfo() {
-        System.out.println("Student Information:");
+        System.out.println("POO.Student Information:");
         System.out.println("Name: " + name);
         System.out.println("Code: " + code);
         System.out.println("Age: " + age);
