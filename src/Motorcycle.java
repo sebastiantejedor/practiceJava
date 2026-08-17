@@ -12,6 +12,7 @@ public class Motorcycle {
         this.price = price;
     }
 
+
     public void displayInfo() {
         System.out.println("Motorcycle 1:");
         System.out.println(year + " " + make + " " + model + " $" + price);

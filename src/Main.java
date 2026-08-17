@@ -3,11 +3,14 @@ import java.util.ArrayList;
 public class Main {
     public static void main(String[] args) {
         System.out.println("Welcome Back!!");
-        // Motorcycle myMotorcycle = new Motorcycle("Suzuki", "GIXXER SF FI 150 ABS", 2027, 12690000);
-        // myMotorcycle.displayInfo();
+
+        Motorcycle myMotorcycle = new Motorcycle("Suzuki", "GIXXER SF FI 150 ABS", 2027, 12690000);
+        myMotorcycle.displayInfo();
 
         // Call the overloaded methods
         int result = suma(5, 10, 15, 5);
+        
+        Car myCar = new Car("Toyota", "Camry", 202, 20000);
 
         Student myStudent = new Student();
         myStudent.name = "Sebastian";
@@ -15,6 +18,16 @@ public class Main {
         myStudent.age = 17;
         myStudent.semester = "2th";
         myStudent.displayInfo();
+        myCar.displayInfo();
+
+
+        Humano myHumano = new Humano("Alvaro", 40);
+        Humano myHumano2 = new Humano("Dayana", 39);
+        myHumano.comer();
+        myHumano.mostrarInformacion();
+        myHumano.edadIncrementada();
+        myHumano2.comer();
+        myHumano2.mostrarInformacion();
     }
     static class condicional {
         static void prueba() {
@@ -30,7 +43,7 @@ public class Main {
             if (age >= 18 && invited == true) {
                 System.out.println("You can pass.");
             } else {
-                System.out.println("You can´t pass, sorry.");
+                System.out.println("You can't pass, sorry.");
             }
         }
     }
