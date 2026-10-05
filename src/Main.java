@@ -1,4 +1,3 @@
-
 import java.util.Scanner;
 import java.util.ArrayList;
 public class Main {
@@ -8,6 +7,8 @@ public class Main {
         // Call the overloaded methods
         int result = suma(5, 10, 15, 5);
 
+        Practice2 practice2 = new Practice2();
+        practice2.main();
     }
 
     static class condicional {
@@ -114,4 +115,20 @@ public class Main {
         System.out.printf("The sum of %d, %d, %d, and %d is: %d\n", a, b, c, d, a + b + c + d);
         return a + b + c + d;
     }
-} 
+
+    public static class Practice2 {
+        String diaSemana = "Viernes";
+
+        public void main() {
+            if (diaSemana.equals("Lunes") || diaSemana.equals("Martes") || diaSemana.equals("Miércoles") || diaSemana.equals("Jueves")) {
+                System.out.println("Es un día de semana.");
+            } else if (diaSemana.equals("Viernes")) {
+                System.out.println("Es viernes, el fin de semana está cerca.");
+            } else if (diaSemana.equals("Sábado") || diaSemana.equals("Domingo")) {
+                System.out.println("Es fin de semana, disfruta tu descanso.");
+            } else {
+                System.out.println("Día no válido.");
+            }
+        }
+    }
+}

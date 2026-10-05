@@ -1,9 +1,4 @@
 package POO;
-import POO.Car;
-import POO.Humano;
-import POO.Motorcycle;
-import POO.Student;
-
 public class Main {
     public static void main(String[] args) {
 
