@@ -1,4 +1,4 @@
-package POO3;
+package POOJava.POO3;
 
     public class Heroe extends Persona {
     String Poder;

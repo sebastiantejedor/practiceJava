@@ -1,4 +1,4 @@
-package POO1;
+package POOJava.POO1;
 
 public class Garaje {
     void estacionar(Auto auto) {

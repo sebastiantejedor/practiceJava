@@ -1,4 +1,4 @@
-package POO;
+package POOJava.POO;
 
 public class Humano {
     String nombre;

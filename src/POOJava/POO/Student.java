@@ -1,4 +1,4 @@
-package POO;
+package POOJava.POO;
 
 public class Student {
     String name;
@@ -7,7 +7,7 @@ public class Student {
     String semester;
 
     void displayInfo() {
-        System.out.println("POO.Student Information:");
+        System.out.println("POOJava.POO.Student Information:");
         System.out.println("Name: " + name);
         System.out.println("Code: " + code);
         System.out.println("Age: " + age);

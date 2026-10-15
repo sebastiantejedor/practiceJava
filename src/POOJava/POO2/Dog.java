@@ -1,4 +1,4 @@
-package POO2;
+package POOJava.POO2;
 
 public class Dog extends Animal {
     @Override

@@ -1,4 +1,4 @@
-package POO2;
+package POOJava.POO2;
 class Main {
     public static void main(String[] args) {
         Dog myDog = new Dog();
