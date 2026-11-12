@@ -220,7 +220,6 @@ public class Calculadora extends JFrame {
         }
     }
 
-    // Soporte completo para teclado físico
     private void configurarTeclado() {
         JRootPane root = getRootPane();
         InputMap im = root.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
