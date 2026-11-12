@@ -1,3 +1,5 @@
+package Practice;
+
 import java.util.Scanner;
 import java.util.ArrayList;
 public class Main {
@@ -83,9 +85,7 @@ public class Main {
     // ArrayList practice
     static class ArrayListPractice{
         static void prueba() {
-
         ArrayList<String> names = new ArrayList<String>();
-
         names.add("Dayana");
         names.add("Alvaro");
         names.add("Sebastian");
@@ -94,10 +94,8 @@ public class Main {
             for (String i : names) {
                 System.out.println(i);
             }
-
         }
     }
-
     static void hola(String name) {
         System.out.println("Hola, " + name + "!");
     }

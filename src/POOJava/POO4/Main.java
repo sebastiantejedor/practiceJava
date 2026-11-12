@@ -1,4 +1,4 @@
-package AbstractClass;
+package POOJava.POO4;
 
 public class Main {
     public static void main(String[] args) {

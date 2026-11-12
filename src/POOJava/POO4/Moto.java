@@ -1,4 +1,4 @@
-package AbstractClass;
+package POOJava.POO4;
 
 public class Moto extends Vehiculo {
     private int numRuedas;

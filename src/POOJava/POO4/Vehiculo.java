@@ -1,4 +1,4 @@
-package AbstractClass;
+package POOJava.POO4;
 
 public abstract class Vehiculo {
     protected String marca;
