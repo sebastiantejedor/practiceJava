@@ -19,7 +19,7 @@ import java.util.Random;
 
 public class MusicPlayer extends JFrame {
 
-    // Paleta oficial Apple Music Dark Mode
+    // Paleta oficial
     private static final Color COLOR_FONDO = new Color(18, 18, 20);
     private static final Color COLOR_SIDEBAR = new Color(24, 24, 27);
     private static final Color COLOR_TARJETA = new Color(30, 30, 34);
@@ -29,12 +29,10 @@ public class MusicPlayer extends JFrame {
     private static final Color COLOR_TEXTO = new Color(245, 245, 247);
     private static final Color COLOR_TEXTO_DIM = new Color(152, 152, 157);
 
-    // Biblioteca local
     private final List<CancionLocal> biblioteca = new ArrayList<>();
     private final List<CancionLocal> listaFiltrada = new ArrayList<>();
     private int indiceActual = -1;
 
-    // Motor de reproducción MP3 (JLayer)
     private AdvancedPlayer reproductorMp3;
     private Thread hiloAudio;
     private boolean reproduciendo = false;
@@ -45,7 +43,6 @@ public class MusicPlayer extends JFrame {
     private long inicioReproduccionMs = 0;
     private long acumuladoMs = 0;
 
-    // Componentes UI
     private JTextField txtFiltro;
     private JPanel panelListaCanciones;
     private JLabel lblContadorCanciones;
@@ -84,15 +81,11 @@ public class MusicPlayer extends JFrame {
         add(crearPanelReproductor(), BorderLayout.EAST);
     }
 
-    // =========================================================================
-    // PANEL IZQUIERDO: BIBLIOTECA LOCAL DE ARCHIVOS MP3
-    // =========================================================================
     private JPanel crearPanelBiblioteca() {
         JPanel panel = new JPanel(new BorderLayout(0, 16));
         panel.setBackground(COLOR_FONDO);
         panel.setBorder(new EmptyBorder(24, 26, 24, 20));
 
-        // Encabezado + Botones para agregar archivos o carpetas
         JPanel filaTitulo = new JPanel(new BorderLayout());
         filaTitulo.setBackground(COLOR_FONDO);
 
@@ -115,7 +108,6 @@ public class MusicPlayer extends JFrame {
         filaTitulo.add(titulo, BorderLayout.WEST);
         filaTitulo.add(botonesImportar, BorderLayout.EAST);
 
-        // Buscador instantáneo dentro de tus MP3
         JPanel cajaBusqueda = new JPanel(new BorderLayout(10, 0)) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -159,7 +151,6 @@ public class MusicPlayer extends JFrame {
 
         panel.add(header, BorderLayout.NORTH);
 
-        // Lista de canciones locales
         panelListaCanciones = new JPanel();
         panelListaCanciones.setLayout(new BoxLayout(panelListaCanciones, BoxLayout.Y_AXIS));
         panelListaCanciones.setBackground(COLOR_FONDO);
@@ -178,9 +169,6 @@ public class MusicPlayer extends JFrame {
         return panel;
     }
 
-    // =========================================================================
-    // PANEL DERECHO: REPRODUCTOR NOW PLAYING + ECUALIZADOR EN VIVO
-    // =========================================================================
     private JPanel crearPanelReproductor() {
         JPanel sidebar = new JPanel();
         sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
@@ -191,19 +179,16 @@ public class MusicPlayer extends JFrame {
                 new EmptyBorder(28, 28, 28, 28)
         ));
 
-        // 1. Carátula con degradado dinámico según la canción
         panelCaratula = new CaratulaPanel();
         panelCaratula.setAlignmentX(Component.CENTER_ALIGNMENT);
         sidebar.add(panelCaratula);
         sidebar.add(Box.createVerticalStrut(22));
 
-        // 2. Ecualizador animado en vivo
         ecualizador = new EcualizadorPanel(26);
         ecualizador.setAlignmentX(Component.CENTER_ALIGNMENT);
         sidebar.add(ecualizador);
         sidebar.add(Box.createVerticalStrut(20));
 
-        // 3. Título y Artista extraídos del nombre de archivo
         lblTituloActual = new JLabel("Sin reproducción");
         lblTituloActual.setForeground(COLOR_TEXTO);
         lblTituloActual.setFont(new Font("SansSerif", Font.BOLD, 19));
@@ -219,7 +204,6 @@ public class MusicPlayer extends JFrame {
         sidebar.add(lblArtistaActual);
         sidebar.add(Box.createVerticalStrut(22));
 
-        // 4. Barra de progreso
         barraProgreso = new BarraProgresoAudio();
         barraProgreso.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -242,7 +226,6 @@ public class MusicPlayer extends JFrame {
         sidebar.add(filaTiempos);
         sidebar.add(Box.createVerticalStrut(22));
 
-        // 5. Controles de Reproducción
         JPanel controles = new JPanel(new FlowLayout(FlowLayout.CENTER, 16, 0));
         controles.setOpaque(false);
         controles.setMaximumSize(new Dimension(330, 68));
@@ -305,9 +288,7 @@ public class MusicPlayer extends JFrame {
         return sidebar;
     }
 
-    // =========================================================================
-    // GESTIÓN DE ARCHIVOS LOCALES MP3
-    // =========================================================================
+
     private void cargarCarpetaMusicaPorDefecto() {
         File carpetaMusica = new File(System.getProperty("user.home"), "Music");
         if (!carpetaMusica.exists()) {
@@ -448,7 +429,6 @@ public class MusicPlayer extends JFrame {
             badge.setOpaque(false);
             fila.add(badge, BorderLayout.WEST);
 
-            // Título + Artista
             JPanel textos = new JPanel();
             textos.setLayout(new BoxLayout(textos, BoxLayout.Y_AXIS));
             textos.setOpaque(false);
@@ -468,7 +448,6 @@ public class MusicPlayer extends JFrame {
             textos.add(Box.createVerticalGlue());
             fila.add(textos, BorderLayout.CENTER);
 
-            // Duración estimada
             JLabel lblDur = new JLabel(formatearSegundos(c.duracionSegundosEstimada));
             lblDur.setForeground(esActual ? COLOR_ROSA_APPLE : COLOR_TEXTO_DIM);
             lblDur.setFont(new Font("SansSerif", Font.PLAIN, 12));
@@ -482,9 +461,6 @@ public class MusicPlayer extends JFrame {
         panelListaCanciones.repaint();
     }
 
-    // =========================================================================
-    // MOTOR DE REPRODUCCIÓN MP3 CON PAUSA Y REANUDACIÓN REAL
-    // =========================================================================
     private void reproducirCancion(CancionLocal cancion) {
         detenerReproduccionTotal();
 
@@ -517,7 +493,7 @@ public class MusicPlayer extends JFrame {
                     @Override
                     public void playbackFinished(PlaybackEvent evt) {
                         if (pausado) {
-                            // Estimación de frame aproximado (~38.28 frames MP3 por segundo)
+
                             framePausado += (int) ((System.currentTimeMillis() - inicioReproduccionMs) / 26.12);
                         } else if (reproduciendo) {
                             reproduciendo = false;
@@ -660,9 +636,6 @@ public class MusicPlayer extends JFrame {
         return btn;
     }
 
-    // =========================================================================
-    // MODELO DE CANCIÓN LOCAL MP3
-    // =========================================================================
     private static class CancionLocal {
         final File archivo;
         final String titulo;
@@ -676,7 +649,6 @@ public class MusicPlayer extends JFrame {
             this.archivo = archivo;
             String nombreSinExt = archivo.getName().replaceFirst("(?i)\\.mp3$", "");
 
-            // Si el archivo tiene formato "Artista - Canción.mp3", los separa automáticamente
             if (nombreSinExt.contains(" - ")) {
                 String[] partes = nombreSinExt.split(" - ", 2);
                 this.artista = partes[0].trim();
@@ -688,10 +660,8 @@ public class MusicPlayer extends JFrame {
 
             double mb = archivo.length() / (1024.0 * 1024.0);
             this.tamanoMb = String.format("%.1f MB", mb);
-            // Estimación estándar a ~192 kbps (24 KB/s)
             this.duracionSegundosEstimada = Math.max(1, archivo.length() / 24000L);
 
-            // Paleta Apple Music única basada en el nombre de la canción
             Color[][] paletas = {
                     {new Color(250, 45, 72), new Color(140, 25, 95)},
                     {new Color(10, 132, 255), new Color(94, 92, 230)},
@@ -705,9 +675,6 @@ public class MusicPlayer extends JFrame {
         }
     }
 
-    // =========================================================================
-    // COMPONENTES VISUALES PERSONALIZADOS
-    // =========================================================================
     private static class CaratulaPanel extends JPanel {
         private Color c1 = COLOR_ROSA_APPLE;
         private Color c2 = new Color(88, 86, 214);
