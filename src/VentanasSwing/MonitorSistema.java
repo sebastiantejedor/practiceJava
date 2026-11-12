@@ -200,16 +200,12 @@ public class MonitorSistema extends JFrame {
         sidebar.add(Box.createVerticalStrut(6));
     }
 
-    // =========================================================================
-    // VISTA 1: ACERCA DE ESTE EQUIPO (HARDWARE, MONITORES, BATERÍA, RED Y SO)
-    // =========================================================================
     private JComponent crearVistaResumen() {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBackground(COLOR_FONDO);
         panel.setBorder(new EmptyBorder(24, 28, 28, 28));
 
-        // 1. Hero Card superior estilo "Acerca de este Mac"
         TarjetaMac heroCard = new TarjetaMac();
         heroCard.setLayout(new BorderLayout(20, 0));
         heroCard.setMaximumSize(new Dimension(Integer.MAX_VALUE, 126));
@@ -249,7 +245,6 @@ public class MonitorSistema extends JFrame {
         panel.add(heroCard);
         panel.add(Box.createVerticalStrut(16));
 
-        // 2. Tres Mini-Tarjetas de estado en vivo
         JPanel filaEstado = new JPanel(new GridLayout(1, 3, 14, 0));
         filaEstado.setBackground(COLOR_FONDO);
         filaEstado.setMaximumSize(new Dimension(Integer.MAX_VALUE, 90));
@@ -265,7 +260,6 @@ public class MonitorSistema extends JFrame {
         panel.add(filaEstado);
         panel.add(Box.createVerticalStrut(18));
 
-        // 3. Tarjeta de Hardware y Energía (Batería)
         TarjetaMac tarjetaHardware = new TarjetaMac();
         tarjetaHardware.setLayout(new BoxLayout(tarjetaHardware, BoxLayout.Y_AXIS));
         tarjetaHardware.add(crearTituloSeccion("Hardware y Energía"));
@@ -283,7 +277,6 @@ public class MonitorSistema extends JFrame {
         panel.add(tarjetaHardware);
         panel.add(Box.createVerticalStrut(16));
 
-        // 4. Tarjeta de Monitores y Pantallas Conectadas
         TarjetaMac tarjetaMonitores = new TarjetaMac();
         tarjetaMonitores.setLayout(new BoxLayout(tarjetaMonitores, BoxLayout.Y_AXIS));
         tarjetaMonitores.add(crearTituloSeccion("Monitores y Pantallas Conectadas"));
@@ -299,7 +292,6 @@ public class MonitorSistema extends JFrame {
         panel.add(tarjetaMonitores);
         panel.add(Box.createVerticalStrut(16));
 
-        // 5. Tarjeta de Red e Interfaces Activas
         TarjetaMac tarjetaRed = new TarjetaMac();
         tarjetaRed.setLayout(new BoxLayout(tarjetaRed, BoxLayout.Y_AXIS));
         tarjetaRed.add(crearTituloSeccion("Red e Interfaces Activas"));
@@ -317,7 +309,6 @@ public class MonitorSistema extends JFrame {
         panel.add(tarjetaRed);
         panel.add(Box.createVerticalStrut(16));
 
-        // 6. Tarjeta de Sistema Operativo, Usuario y Entorno Java
         TarjetaMac tarjetaSoftware = new TarjetaMac();
         tarjetaSoftware.setLayout(new BoxLayout(tarjetaSoftware, BoxLayout.Y_AXIS));
         tarjetaSoftware.add(crearTituloSeccion("Sistema Operativo y Entorno"));
@@ -393,9 +384,6 @@ public class MonitorSistema extends JFrame {
         return fila;
     }
 
-    // =========================================================================
-    // VISTA 2: CPU Y MEMORIA EN TIEMPO REAL
-    // =========================================================================
     private JPanel crearVistaRendimiento() {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -414,7 +402,6 @@ public class MonitorSistema extends JFrame {
         gridPrincipal.setMaximumSize(new Dimension(Integer.MAX_VALUE, 315));
         gridPrincipal.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // Tarjeta CPU
         TarjetaMac cardCpu = new TarjetaMac();
         cardCpu.setLayout(new BorderLayout(0, 10));
         JPanel topCpu = new JPanel(new BorderLayout());
@@ -434,7 +421,6 @@ public class MonitorSistema extends JFrame {
         cardCpu.add(gaugeCpu, BorderLayout.CENTER);
         cardCpu.add(graficaCpu, BorderLayout.SOUTH);
 
-        // Tarjeta RAM
         TarjetaMac cardRam = new TarjetaMac();
         cardRam.setLayout(new BorderLayout(0, 10));
         JPanel topRam = new JPanel(new BorderLayout());
@@ -459,7 +445,6 @@ public class MonitorSistema extends JFrame {
         panel.add(gridPrincipal);
         panel.add(Box.createVerticalStrut(14));
 
-        // Tarjeta Memoria Virtual / Swap
         TarjetaMac cardSwap = new TarjetaMac();
         cardSwap.setLayout(new BorderLayout(0, 8));
         cardSwap.setMaximumSize(new Dimension(Integer.MAX_VALUE, 78));
@@ -482,7 +467,6 @@ public class MonitorSistema extends JFrame {
         panel.add(cardSwap);
         panel.add(Box.createVerticalStrut(14));
 
-        // Tarjeta Memoria Heap JVM
         TarjetaMac cardHeap = new TarjetaMac();
         cardHeap.setLayout(new BorderLayout(0, 8));
         cardHeap.setMaximumSize(new Dimension(Integer.MAX_VALUE, 108));
@@ -523,9 +507,6 @@ public class MonitorSistema extends JFrame {
         return panel;
     }
 
-    // =========================================================================
-    // VISTA 3: ALMACENAMIENTO (TODOS LOS DISCOS Y PARTICIONES)
-    // =========================================================================
     private JPanel crearVistaAlmacenamiento() {
         JPanel panel = new JPanel(new BorderLayout(0, 18));
         panel.setBackground(COLOR_FONDO);
@@ -637,16 +618,12 @@ public class MonitorSistema extends JFrame {
         contenedorDiscos.repaint();
     }
 
-    // =========================================================================
-    // VISTA 4: DIAGNÓSTICO DE RED Y TEST DE PING EN TIEMPO REAL
-    // =========================================================================
     private JPanel crearVistaRed() {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBackground(COLOR_FONDO);
         panel.setBorder(new EmptyBorder(24, 28, 24, 28));
 
-        // Encabezado
         JPanel header = new JPanel(new BorderLayout());
         header.setBackground(COLOR_FONDO);
         header.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
@@ -665,7 +642,6 @@ public class MonitorSistema extends JFrame {
         panel.add(header);
         panel.add(Box.createVerticalStrut(16));
 
-        // Barra de control de destino y botones rápidos
         TarjetaMac cardControl = new TarjetaMac();
         cardControl.setLayout(new BorderLayout(12, 0));
         cardControl.setMaximumSize(new Dimension(Integer.MAX_VALUE, 68));
@@ -702,7 +678,6 @@ public class MonitorSistema extends JFrame {
         panel.add(cardControl);
         panel.add(Box.createVerticalStrut(16));
 
-        // 4 Métricas de Ping en vivo
         JPanel filaMetricasPing = new JPanel(new GridLayout(1, 4, 12, 0));
         filaMetricasPing.setBackground(COLOR_FONDO);
         filaMetricasPing.setMaximumSize(new Dimension(Integer.MAX_VALUE, 86));
@@ -721,7 +696,6 @@ public class MonitorSistema extends JFrame {
         panel.add(filaMetricasPing);
         panel.add(Box.createVerticalStrut(16));
 
-        // Gráfica de historial de latencia
         TarjetaMac cardGraficaPing = new TarjetaMac();
         cardGraficaPing.setLayout(new BorderLayout(0, 8));
         cardGraficaPing.setMaximumSize(new Dimension(Integer.MAX_VALUE, 155));
@@ -739,7 +713,6 @@ public class MonitorSistema extends JFrame {
         panel.add(cardGraficaPing);
         panel.add(Box.createVerticalStrut(16));
 
-        // Consola de respuestas ICMP/TCP estilo terminal macOS
         TarjetaMac cardConsola = new TarjetaMac();
         cardConsola.setLayout(new BorderLayout(0, 8));
         cardConsola.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -780,7 +753,6 @@ public class MonitorSistema extends JFrame {
             String host = txtHostPing.getText().trim();
             if (host.isEmpty()) return;
 
-            // Reiniciar estadísticas
             pingsEnviados = 0;
             pingsPerdidos = 0;
             sumaLatencia = 0;
@@ -875,9 +847,6 @@ public class MonitorSistema extends JFrame {
         }.execute();
     }
 
-    // =========================================================================
-    // EXPORTAR INFORME TÉCNICO COMPLETO A .TXT
-    // =========================================================================
     private void exportarInformeTxt() {
         JFileChooser chooser = new JFileChooser();
         chooser.setDialogTitle("Guardar Informe Técnico del Sistema");
@@ -892,10 +861,9 @@ public class MonitorSistema extends JFrame {
             }
 
             try (PrintWriter out = new PrintWriter(new FileWriter(archivo))) {
-                out.println("=========================================================================");
                 out.println(" INFORME TÉCNICO DEL SISTEMA");
                 out.println(" Generado el: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
-                out.println("=========================================================================\n");
+                out.println("\n");
 
                 out.println("[1. IDENTIFICACIÓN Y SISTEMA OPERATIVO]");
                 out.println("  Nombre del Equipo (Host) : " + obtenerNombreEquipo());
@@ -952,7 +920,6 @@ public class MonitorSistema extends JFrame {
                 out.println("  Versión Java             : " + System.getProperty("java.vm.name") + " " + System.getProperty("java.version"));
                 out.println("  Proveedor                : " + System.getProperty("java.vendor"));
                 out.println("  Ruta Instalación         : " + System.getProperty("java.home"));
-                out.println("=========================================================================");
 
                 JOptionPane.showMessageDialog(
                         this,
@@ -971,9 +938,6 @@ public class MonitorSistema extends JFrame {
         }
     }
 
-    // =========================================================================
-    // MOTOR DE ACTUALIZACIÓN EN TIEMPO REAL
-    // =========================================================================
     private void iniciarActualizacionEnVivo() {
         Timer timer = new Timer(900, e -> actualizarMetricas());
         timer.setInitialDelay(150);
@@ -981,7 +945,6 @@ public class MonitorSistema extends JFrame {
     }
 
     private void actualizarMetricas() {
-        // 1. CPU
         double cpuSis = Math.max(0, osBean.getCpuLoad() * 100.0);
         double cpuJvm = Math.max(0, osBean.getProcessCpuLoad() * 100.0);
 
@@ -990,7 +953,6 @@ public class MonitorSistema extends JFrame {
         lblCpuDetalle.setText(String.format("App JVM: %.1f%%", cpuJvm));
         lblResumenCpu.setText(String.format("%.0f%%", cpuSis));
 
-        // 2. RAM Física
         long ramTotal = osBean.getTotalMemorySize();
         long ramLibre = osBean.getFreeMemorySize();
         long ramUsada = ramTotal - ramLibre;
@@ -1004,7 +966,6 @@ public class MonitorSistema extends JFrame {
         lblRamDetalle.setText(String.format("%.1f / %.1f GB", gbUsada, gbTotal));
         lblResumenRam.setText(String.format("%.1f / %.0f GB", gbUsada, gbTotal));
 
-        // 3. Memoria Virtual / Swap
         long swapTotal = osBean.getTotalSwapSpaceSize();
         long swapLibre = osBean.getFreeSwapSpaceSize();
         long swapUsada = Math.max(0, swapTotal - swapLibre);
@@ -1013,20 +974,16 @@ public class MonitorSistema extends JFrame {
         lblSwapDetalle.setText(String.format("%.2f / %.2f GB", swapUsadaGb, swapTotalGb));
         barraSwap.setProgreso(swapTotal > 0 ? (double) swapUsada / swapTotal : 0);
 
-        // 4. JVM Heap
         MemoryUsage heap = memoryBean.getHeapMemoryUsage();
         long heapUsadoMb = heap.getUsed() / (1024 * 1024);
         long heapMaxMb = heap.getMax() / (1024 * 1024);
         lblJvmHeapDetalle.setText(heapUsadoMb + " MB usados de " + heapMaxMb + " MB máx");
         barraJvmHeap.setProgreso(heapMaxMb > 0 ? (double) heapUsadoMb / heapMaxMb : 0);
 
-        // 5. Uptime
+
         lblUptimeValor.setText(formatearDuracion(runtimeBean.getUptime()));
     }
 
-    // =========================================================================
-    // DETECCIÓN DE MONITORES, BATERÍA, HARDWARE Y RED
-    // =========================================================================
     private List<String[]> obtenerMonitoresConectados() {
         List<String[]> lista = new ArrayList<>();
         try {
@@ -1207,9 +1164,6 @@ public class MonitorSistema extends JFrame {
         return btn;
     }
 
-    // =========================================================================
-    // COMPONENTES GRÁFICOS PERSONALIZADOS (Graphics2D)
-    // =========================================================================
     private static class BotonSidebar extends JButton {
         private final Color acento;
         private boolean activo;
