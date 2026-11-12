@@ -1,4 +1,4 @@
-package POOJava.POO;
+package POOJava.HerenciaSimple;
 
 public class Student {
     String name;

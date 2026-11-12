@@ -1,4 +1,4 @@
-package POOJava.POO2;
+package POOJava.SobreescrituraMetodos;
 class Main {
     public static void main(String[] args) {
         Dog myDog = new Dog();

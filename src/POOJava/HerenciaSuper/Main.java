@@ -1,4 +1,4 @@
-package POOJava.POO3;
+package POOJava.HerenciaSuper;
 
 public class Main {
     public static void main(String[] args) {

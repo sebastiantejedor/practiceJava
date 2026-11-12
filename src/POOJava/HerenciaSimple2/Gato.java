@@ -1,4 +1,4 @@
-package POOJava.POO1;
+package POOJava.HerenciaSimple2;
 
 public class Gato extends Animal {
 

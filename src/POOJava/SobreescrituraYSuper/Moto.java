@@ -1,4 +1,4 @@
-package POOJava.POO4;
+package POOJava.SobreescrituraYSuper;
 
 public class Moto extends Vehiculo {
     private int numRuedas;

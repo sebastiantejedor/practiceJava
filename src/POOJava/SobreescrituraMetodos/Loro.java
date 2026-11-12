@@ -1,4 +1,4 @@
-package POOJava.POO2;
+package POOJava.SobreescrituraMetodos;
 
 public class Loro extends Animal {
     @Override

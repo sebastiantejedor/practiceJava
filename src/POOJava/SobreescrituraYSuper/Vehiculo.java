@@ -1,4 +1,4 @@
-package POOJava.POO4;
+package POOJava.SobreescrituraYSuper;
 
 public abstract class Vehiculo {
     protected String marca;

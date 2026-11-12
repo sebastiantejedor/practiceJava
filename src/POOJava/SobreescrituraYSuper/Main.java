@@ -1,4 +1,4 @@
-package POOJava.POO4;
+package POOJava.SobreescrituraYSuper;
 
 public class Main {
     public static void main(String[] args) {
