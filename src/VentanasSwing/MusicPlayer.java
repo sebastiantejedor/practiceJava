@@ -3,7 +3,6 @@ package VentanasSwing;
 import javazoom.jl.player.advanced.AdvancedPlayer;
 import javazoom.jl.player.advanced.PlaybackEvent;
 import javazoom.jl.player.advanced.PlaybackListener;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -19,7 +18,6 @@ import java.util.Random;
 
 public class MusicPlayer extends JFrame {
 
-    // Paleta oficial
     private static final Color COLOR_FONDO = new Color(18, 18, 20);
     private static final Color COLOR_SIDEBAR = new Color(24, 24, 27);
     private static final Color COLOR_TARJETA = new Color(30, 30, 34);
@@ -411,7 +409,6 @@ public class MusicPlayer extends JFrame {
             fila.setBorder(new EmptyBorder(8, 12, 8, 14));
             fila.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-            // Miniatura de color único por pista
             JPanel badge = new JPanel() {
                 @Override
                 protected void paintComponent(Graphics g) {
