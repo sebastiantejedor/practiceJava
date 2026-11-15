@@ -18,19 +18,24 @@ import java.util.Random;
 
 public class MusicPlayer extends JFrame {
 
-    private static final Color COLOR_FONDO = new Color(18, 18, 20);
-    private static final Color COLOR_SIDEBAR = new Color(24, 24, 27);
-    private static final Color COLOR_TARJETA = new Color(30, 30, 34);
-    private static final Color COLOR_TARJETA_HOVER = new Color(42, 42, 48);
-    private static final Color COLOR_BORDE = new Color(50, 50, 56);
     private static final Color COLOR_ROSA_APPLE = new Color(250, 45, 72);
-    private static final Color COLOR_TEXTO = new Color(245, 245, 247);
-    private static final Color COLOR_TEXTO_DIM = new Color(152, 152, 157);
 
+    private boolean modoOscuro = true;
+    private Color colorFondoCentral;
+    private Color colorSidebar;
+    private Color colorTarjeta;
+    private Color colorTarjetaHover;
+    private Color colorBorde;
+    private Color colorTexto;
+    private Color colorTextoDim;
+    private Color colorPistaBarra;
+
+    // Biblioteca local
     private final List<CancionLocal> biblioteca = new ArrayList<>();
     private final List<CancionLocal> listaFiltrada = new ArrayList<>();
     private int indiceActual = -1;
 
+    // Motor de reproducción MP3 (JLayer)
     private AdvancedPlayer reproductorMp3;
     private Thread hiloAudio;
     private boolean reproduciendo = false;
@@ -41,95 +46,179 @@ public class MusicPlayer extends JFrame {
     private long inicioReproduccionMs = 0;
     private long acumuladoMs = 0;
 
+    // Componentes UI
+    private JPanel panelSidebar;
+    private JPanel panelCentral;
+    private JLabel lblTituloBiblio;
     private JTextField txtFiltro;
     private JPanel panelListaCanciones;
     private JLabel lblContadorCanciones;
+    private JButton btnTema;
+    private JButton btnAgregarArchivos;
+    private JButton btnAgregarCarpeta;
 
     private CaratulaPanel panelCaratula;
     private EcualizadorPanel ecualizador;
+    private JLabel lblBadgeEstado;
     private JLabel lblTituloActual;
     private JLabel lblArtistaActual;
     private JLabel lblTiempoTranscurrido;
     private JLabel lblDuracionEstimada;
     private BarraProgresoAudio barraProgreso;
     private JButton btnPlayPause;
+    private JButton btnAnterior;
+    private JButton btnSiguiente;
     private JButton btnShuffle;
     private JButton btnRepeat;
     private Timer timerUI;
 
     public MusicPlayer() {
+        aplicarPaletaTema();
         configurarVentana();
         inicializarUI();
         iniciarTimerUI();
         cargarCarpetaMusicaPorDefecto();
     }
 
+    private void aplicarPaletaTema() {
+        if (modoOscuro) {
+            colorFondoCentral = new Color(16, 16, 18);
+            colorSidebar = new Color(24, 24, 27);
+            colorTarjeta = new Color(34, 34, 38);
+            colorTarjetaHover = new Color(46, 46, 52);
+            colorBorde = new Color(48, 48, 54);
+            colorTexto = new Color(245, 245, 247);
+            colorTextoDim = new Color(152, 152, 157);
+            colorPistaBarra = new Color(54, 54, 60);
+        } else {
+            colorFondoCentral = new Color(255, 255, 255);
+            colorSidebar = new Color(245, 245, 247);
+            colorTarjeta = new Color(232, 232, 237);
+            colorTarjetaHover = new Color(222, 222, 228);
+            colorBorde = new Color(216, 216, 222);
+            colorTexto = new Color(28, 28, 30);
+            colorTextoDim = new Color(110, 110, 115);
+            colorPistaBarra = new Color(220, 220, 226);
+        }
+    }
+
+    private void alternarTema() {
+        modoOscuro = !modoOscuro;
+        aplicarPaletaTema();
+
+        getContentPane().setBackground(colorFondoCentral);
+        panelSidebar.setBackground(colorSidebar);
+        panelSidebar.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(0, 0, 0, 1, colorBorde),
+                new EmptyBorder(20, 16, 16, 16)
+        ));
+        panelCentral.setBackground(colorFondoCentral);
+
+        lblTituloBiblio.setForeground(colorTexto);
+        txtFiltro.setForeground(colorTexto);
+        lblContadorCanciones.setForeground(colorTextoDim);
+
+        lblTituloActual.setForeground(colorTexto);
+        lblTiempoTranscurrido.setForeground(colorTextoDim);
+        lblDuracionEstimada.setForeground(colorTextoDim);
+
+        btnAnterior.setForeground(colorTexto);
+        btnSiguiente.setForeground(colorTexto);
+        btnShuffle.setForeground(modoAleatorio ? COLOR_ROSA_APPLE : colorTextoDim);
+        btnRepeat.setForeground(modoRepetir ? COLOR_ROSA_APPLE : colorTextoDim);
+
+        btnTema.setText(modoOscuro ? "☀ Modo Claro" : "🌙 Modo Oscuro");
+        btnTema.setBackground(colorTarjeta);
+        btnTema.setForeground(colorTexto);
+
+        btnAgregarArchivos.setBackground(colorTarjeta);
+        btnAgregarArchivos.setForeground(colorTexto);
+
+        panelListaCanciones.setBackground(colorSidebar);
+        renderizarLista();
+        repaint();
+    }
+
     private void configurarVentana() {
         setTitle("Music Player");
-        setSize(1000, 650);
-        setMinimumSize(new Dimension(900, 580));
+        setSize(1060, 680);
+        setMinimumSize(new Dimension(920, 600));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        getContentPane().setBackground(COLOR_FONDO);
+        getContentPane().setBackground(colorFondoCentral);
         setLayout(new BorderLayout());
     }
 
     private void inicializarUI() {
-        add(crearPanelBiblioteca(), BorderLayout.CENTER);
-        add(crearPanelReproductor(), BorderLayout.EAST);
+        add(crearSidebarBiblioteca(), BorderLayout.WEST);
+        add(crearEscenarioCentral(), BorderLayout.CENTER);
     }
 
-    private JPanel crearPanelBiblioteca() {
-        JPanel panel = new JPanel(new BorderLayout(0, 16));
-        panel.setBackground(COLOR_FONDO);
-        panel.setBorder(new EmptyBorder(24, 26, 24, 20));
+    // =========================================================================
+    // PANEL IZQUIERDO: SIDEBAR COMPACTO CON BIBLIOTECA MP3
+    // =========================================================================
+    private JPanel crearSidebarBiblioteca() {
+        panelSidebar = new JPanel(new BorderLayout(0, 12));
+        panelSidebar.setBackground(colorSidebar);
+        panelSidebar.setPreferredSize(new Dimension(320, 680));
+        panelSidebar.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(0, 0, 0, 1, colorBorde),
+                new EmptyBorder(20, 16, 16, 16)
+        ));
 
-        JPanel filaTitulo = new JPanel(new BorderLayout());
-        filaTitulo.setBackground(COLOR_FONDO);
+        // Encabezado del Sidebar
+        JPanel topSidebar = new JPanel();
+        topSidebar.setLayout(new BoxLayout(topSidebar, BoxLayout.Y_AXIS));
+        topSidebar.setOpaque(false);
 
-        JLabel titulo = new JLabel("Tu Biblioteca MP3");
-        titulo.setForeground(COLOR_TEXTO);
-        titulo.setFont(new Font("SansSerif", Font.BOLD, 28));
+        JPanel filaTit = new JPanel(new BorderLayout());
+        filaTit.setOpaque(false);
 
-        JPanel botonesImportar = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
-        botonesImportar.setBackground(COLOR_FONDO);
+        lblTituloBiblio = new JLabel("Biblioteca");
+        lblTituloBiblio.setForeground(colorTexto);
+        lblTituloBiblio.setFont(new Font("SansSerif", Font.BOLD, 22));
 
-        JButton btnAgregarArchivos = crearBotonPildora("+ Archivos MP3", COLOR_TARJETA, COLOR_TEXTO);
+        JPanel filaBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 6, 0));
+        filaBotones.setOpaque(false);
+
+        btnAgregarArchivos = crearBotonPildora("+ MP3", colorTarjeta, colorTexto);
+        btnAgregarArchivos.setToolTipText("Agregar archivos MP3");
         btnAgregarArchivos.addActionListener(e -> seleccionarArchivosMp3());
 
-        JButton btnAgregarCarpeta = crearBotonPildora("+ Carpeta", COLOR_ROSA_APPLE, Color.WHITE);
+        btnAgregarCarpeta = crearBotonPildora("+ Carpeta", COLOR_ROSA_APPLE, Color.WHITE);
+        btnAgregarCarpeta.setToolTipText("Escanear carpeta completa");
         btnAgregarCarpeta.addActionListener(e -> seleccionarCarpetaMp3());
 
-        botonesImportar.add(btnAgregarArchivos);
-        botonesImportar.add(btnAgregarCarpeta);
+        filaBotones.add(btnAgregarArchivos);
+        filaBotones.add(btnAgregarCarpeta);
 
-        filaTitulo.add(titulo, BorderLayout.WEST);
-        filaTitulo.add(botonesImportar, BorderLayout.EAST);
+        filaTit.add(lblTituloBiblio, BorderLayout.WEST);
+        filaTit.add(filaBotones, BorderLayout.EAST);
 
-        JPanel cajaBusqueda = new JPanel(new BorderLayout(10, 0)) {
+        // Buscador estilo macOS
+        JPanel cajaBusqueda = new JPanel(new BorderLayout(8, 0)) {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(COLOR_TARJETA);
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 14, 14);
-                g2.setColor(COLOR_BORDE);
-                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 14, 14);
+                g2.setColor(colorTarjeta);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
                 g2.dispose();
             }
         };
         cajaBusqueda.setOpaque(false);
-        cajaBusqueda.setBorder(new EmptyBorder(9, 14, 9, 14));
+        cajaBusqueda.setBorder(new EmptyBorder(7, 12, 7, 12));
 
         JLabel iconoLupa = new JLabel("🔍");
-        iconoLupa.setForeground(COLOR_TEXTO_DIM);
+        iconoLupa.setForeground(colorTextoDim);
 
         txtFiltro = new JTextField();
         txtFiltro.setOpaque(false);
         txtFiltro.setBorder(null);
-        txtFiltro.setForeground(COLOR_TEXTO);
+        txtFiltro.setForeground(colorTexto);
         txtFiltro.setCaretColor(COLOR_ROSA_APPLE);
-        txtFiltro.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        txtFiltro.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        txtFiltro.setToolTipText("Buscar canción o artista...");
         txtFiltro.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
@@ -140,102 +229,127 @@ public class MusicPlayer extends JFrame {
         cajaBusqueda.add(iconoLupa, BorderLayout.WEST);
         cajaBusqueda.add(txtFiltro, BorderLayout.CENTER);
 
-        JPanel header = new JPanel();
-        header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));
-        header.setBackground(COLOR_FONDO);
-        header.add(filaTitulo);
-        header.add(Box.createVerticalStrut(14));
-        header.add(cajaBusqueda);
+        topSidebar.add(filaTit);
+        topSidebar.add(Box.createVerticalStrut(12));
+        topSidebar.add(cajaBusqueda);
 
-        panel.add(header, BorderLayout.NORTH);
+        panelSidebar.add(topSidebar, BorderLayout.NORTH);
 
+        // Lista de pistas MP3
         panelListaCanciones = new JPanel();
         panelListaCanciones.setLayout(new BoxLayout(panelListaCanciones, BoxLayout.Y_AXIS));
-        panelListaCanciones.setBackground(COLOR_FONDO);
+        panelListaCanciones.setBackground(colorSidebar);
 
         JScrollPane scroll = new JScrollPane(panelListaCanciones);
         scroll.setBorder(null);
-        scroll.getViewport().setBackground(COLOR_FONDO);
-        scroll.getVerticalScrollBar().setUnitIncrement(18);
-        panel.add(scroll, BorderLayout.CENTER);
+        scroll.setOpaque(false);
+        scroll.getViewport().setOpaque(false);
+        scroll.getVerticalScrollBar().setUnitIncrement(16);
+        scroll.getVerticalScrollBar().setPreferredSize(new Dimension(5, 0));
+        panelSidebar.add(scroll, BorderLayout.CENTER);
 
-        lblContadorCanciones = new JLabel("0 canciones cargadas");
-        lblContadorCanciones.setForeground(COLOR_TEXTO_DIM);
-        lblContadorCanciones.setFont(new Font("SansSerif", Font.PLAIN, 12));
-        panel.add(lblContadorCanciones, BorderLayout.SOUTH);
+        lblContadorCanciones = new JLabel("0 pistas MP3");
+        lblContadorCanciones.setForeground(colorTextoDim);
+        lblContadorCanciones.setFont(new Font("SansSerif", Font.PLAIN, 11));
+        panelSidebar.add(lblContadorCanciones, BorderLayout.SOUTH);
 
-        return panel;
+        return panelSidebar;
     }
 
-    private JPanel crearPanelReproductor() {
-        JPanel sidebar = new JPanel();
-        sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
-        sidebar.setBackground(COLOR_SIDEBAR);
-        sidebar.setPreferredSize(new Dimension(370, 650));
-        sidebar.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createMatteBorder(0, 1, 0, 0, COLOR_BORDE),
-                new EmptyBorder(28, 28, 28, 28)
-        ));
+    // =========================================================================
+    // ESCENARIO CENTRAL: REPRODUCTOR PROTAGONISTA CENTRADO
+    // =========================================================================
+    private JPanel crearEscenarioCentral() {
+        panelCentral = new JPanel(new BorderLayout());
+        panelCentral.setBackground(colorFondoCentral);
+        panelCentral.setBorder(new EmptyBorder(20, 32, 28, 32));
 
+        // Barra superior con indicador "Reproduciendo ahora" y botón de Tema Claro/Oscuro
+        JPanel barraSuperior = new JPanel(new BorderLayout());
+        barraSuperior.setOpaque(false);
+
+        lblBadgeEstado = new JLabel("● EN REPRODUCCIÓN");
+        lblBadgeEstado.setForeground(COLOR_ROSA_APPLE);
+        lblBadgeEstado.setFont(new Font("SansSerif", Font.BOLD, 11));
+
+        btnTema = crearBotonPildora("☀ Modo Claro", colorTarjeta, colorTexto);
+        btnTema.addActionListener(e -> alternarTema());
+
+        barraSuperior.add(lblBadgeEstado, BorderLayout.WEST);
+        barraSuperior.add(btnTema, BorderLayout.EAST);
+        panelCentral.add(barraSuperior, BorderLayout.NORTH);
+
+        // Contenedor perfectamente centrado para Carátula + Info + Controles
+        JPanel centroHero = new JPanel();
+        centroHero.setLayout(new BoxLayout(centroHero, BoxLayout.Y_AXIS));
+        centroHero.setOpaque(false);
+
+        centroHero.add(Box.createVerticalGlue());
+
+        // 1. Carátula grande protagonista con sombra realista
         panelCaratula = new CaratulaPanel();
         panelCaratula.setAlignmentX(Component.CENTER_ALIGNMENT);
-        sidebar.add(panelCaratula);
-        sidebar.add(Box.createVerticalStrut(22));
+        centroHero.add(panelCaratula);
+        centroHero.add(Box.createVerticalStrut(22));
 
-        ecualizador = new EcualizadorPanel(26);
+        // 2. Ecualizador espectral centrado
+        ecualizador = new EcualizadorPanel(32);
         ecualizador.setAlignmentX(Component.CENTER_ALIGNMENT);
-        sidebar.add(ecualizador);
-        sidebar.add(Box.createVerticalStrut(20));
+        centroHero.add(ecualizador);
+        centroHero.add(Box.createVerticalStrut(18));
 
-        lblTituloActual = new JLabel("Sin reproducción");
-        lblTituloActual.setForeground(COLOR_TEXTO);
-        lblTituloActual.setFont(new Font("SansSerif", Font.BOLD, 19));
+        // 3. Título y Artista centrados
+        lblTituloActual = new JLabel("Selecciona una canción");
+        lblTituloActual.setForeground(colorTexto);
+        lblTituloActual.setFont(new Font("SansSerif", Font.BOLD, 24));
         lblTituloActual.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        lblArtistaActual = new JLabel("Selecciona un MP3 de tu equipo");
+        lblArtistaActual = new JLabel("Tus archivos locales MP3");
         lblArtistaActual.setForeground(COLOR_ROSA_APPLE);
-        lblArtistaActual.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        lblArtistaActual.setFont(new Font("SansSerif", Font.PLAIN, 15));
         lblArtistaActual.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        sidebar.add(lblTituloActual);
-        sidebar.add(Box.createVerticalStrut(4));
-        sidebar.add(lblArtistaActual);
-        sidebar.add(Box.createVerticalStrut(22));
+        centroHero.add(lblTituloActual);
+        centroHero.add(Box.createVerticalStrut(4));
+        centroHero.add(lblArtistaActual);
+        centroHero.add(Box.createVerticalStrut(22));
 
+        // 4. Barra de progreso ancha y tiempos
         barraProgreso = new BarraProgresoAudio();
         barraProgreso.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JPanel filaTiempos = new JPanel(new BorderLayout());
         filaTiempos.setOpaque(false);
-        filaTiempos.setMaximumSize(new Dimension(310, 20));
+        filaTiempos.setMaximumSize(new Dimension(420, 20));
         lblTiempoTranscurrido = new JLabel("0:00");
-        lblTiempoTranscurrido.setForeground(COLOR_TEXTO_DIM);
-        lblTiempoTranscurrido.setFont(new Font("SansSerif", Font.PLAIN, 11));
+        lblTiempoTranscurrido.setForeground(colorTextoDim);
+        lblTiempoTranscurrido.setFont(new Font("SansSerif", Font.PLAIN, 12));
 
         lblDuracionEstimada = new JLabel("0:00");
-        lblDuracionEstimada.setForeground(COLOR_TEXTO_DIM);
-        lblDuracionEstimada.setFont(new Font("SansSerif", Font.PLAIN, 11));
+        lblDuracionEstimada.setForeground(colorTextoDim);
+        lblDuracionEstimada.setFont(new Font("SansSerif", Font.PLAIN, 12));
 
         filaTiempos.add(lblTiempoTranscurrido, BorderLayout.WEST);
         filaTiempos.add(lblDuracionEstimada, BorderLayout.EAST);
 
-        sidebar.add(barraProgreso);
-        sidebar.add(Box.createVerticalStrut(4));
-        sidebar.add(filaTiempos);
-        sidebar.add(Box.createVerticalStrut(22));
+        centroHero.add(barraProgreso);
+        centroHero.add(Box.createVerticalStrut(4));
+        centroHero.add(filaTiempos);
+        centroHero.add(Box.createVerticalStrut(20));
 
-        JPanel controles = new JPanel(new FlowLayout(FlowLayout.CENTER, 16, 0));
+        // 5. Botonera de control centrada
+        JPanel controles = new JPanel(new FlowLayout(FlowLayout.CENTER, 22, 0));
         controles.setOpaque(false);
-        controles.setMaximumSize(new Dimension(330, 68));
+        controles.setMaximumSize(new Dimension(440, 74));
 
-        btnShuffle = crearBotonControl("⇄", 16, COLOR_TEXTO_DIM);
-        btnShuffle.setToolTipText("Aleatorio");
+        btnShuffle = crearBotonControl("⇄", 18, colorTextoDim);
+        btnShuffle.setToolTipText("Modo aleatorio");
         btnShuffle.addActionListener(e -> {
             modoAleatorio = !modoAleatorio;
-            btnShuffle.setForeground(modoAleatorio ? COLOR_ROSA_APPLE : COLOR_TEXTO_DIM);
+            btnShuffle.setForeground(modoAleatorio ? COLOR_ROSA_APPLE : colorTextoDim);
         });
 
-        JButton btnAnterior = crearBotonControl("⏮", 22, COLOR_TEXTO);
+        btnAnterior = crearBotonControl("⏮", 26, colorTexto);
         btnAnterior.addActionListener(e -> reproducirAnterior());
 
         btnPlayPause = new JButton("▶") {
@@ -249,23 +363,23 @@ public class MusicPlayer extends JFrame {
                 g2.dispose();
             }
         };
-        btnPlayPause.setPreferredSize(new Dimension(62, 62));
+        btnPlayPause.setPreferredSize(new Dimension(68, 68));
         btnPlayPause.setForeground(Color.WHITE);
-        btnPlayPause.setFont(new Font("SansSerif", Font.BOLD, 22));
+        btnPlayPause.setFont(new Font("SansSerif", Font.BOLD, 24));
         btnPlayPause.setContentAreaFilled(false);
         btnPlayPause.setBorderPainted(false);
         btnPlayPause.setFocusPainted(false);
         btnPlayPause.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnPlayPause.addActionListener(e -> alternarPlayPause());
 
-        JButton btnSiguiente = crearBotonControl("⏭", 22, COLOR_TEXTO);
+        btnSiguiente = crearBotonControl("⏭", 26, colorTexto);
         btnSiguiente.addActionListener(e -> reproducirSiguiente());
 
-        btnRepeat = crearBotonControl("↻", 18, COLOR_TEXTO_DIM);
-        btnRepeat.setToolTipText("Repetir pista");
+        btnRepeat = crearBotonControl("↻", 20, colorTextoDim);
+        btnRepeat.setToolTipText("Repetir canción");
         btnRepeat.addActionListener(e -> {
             modoRepetir = !modoRepetir;
-            btnRepeat.setForeground(modoRepetir ? COLOR_ROSA_APPLE : COLOR_TEXTO_DIM);
+            btnRepeat.setForeground(modoRepetir ? COLOR_ROSA_APPLE : colorTextoDim);
         });
 
         controles.add(btnShuffle);
@@ -274,19 +388,16 @@ public class MusicPlayer extends JFrame {
         controles.add(btnSiguiente);
         controles.add(btnRepeat);
 
-        sidebar.add(controles);
-        sidebar.add(Box.createVerticalGlue());
+        centroHero.add(controles);
+        centroHero.add(Box.createVerticalGlue());
 
-        JLabel hintFormatos = new JLabel("Formato soportado: MP3 Local (320 kbps / VBR)");
-        hintFormatos.setForeground(COLOR_TEXTO_DIM);
-        hintFormatos.setFont(new Font("SansSerif", Font.PLAIN, 11));
-        hintFormatos.setAlignmentX(Component.CENTER_ALIGNMENT);
-        sidebar.add(hintFormatos);
-
-        return sidebar;
+        panelCentral.add(centroHero, BorderLayout.CENTER);
+        return panelCentral;
     }
 
-
+    // =========================================================================
+    // GESTIÓN DE ARCHIVOS LOCALES MP3
+    // =========================================================================
     private void cargarCarpetaMusicaPorDefecto() {
         File carpetaMusica = new File(System.getProperty("user.home"), "Music");
         if (!carpetaMusica.exists()) {
@@ -358,17 +469,18 @@ public class MusicPlayer extends JFrame {
             }
         }
         renderizarLista();
-        lblContadorCanciones.setText(listaFiltrada.size() + " canciones MP3 en biblioteca");
+        lblContadorCanciones.setText(listaFiltrada.size() + " pistas MP3");
     }
 
     private void renderizarLista() {
         panelListaCanciones.removeAll();
 
         if (listaFiltrada.isEmpty()) {
-            JLabel vacio = new JLabel("No hay archivos MP3 cargados. Usa '+ Archivos MP3' o '+ Carpeta' arriba.");
-            vacio.setForeground(COLOR_TEXTO_DIM);
-            vacio.setFont(new Font("SansSerif", Font.PLAIN, 14));
-            vacio.setBorder(new EmptyBorder(40, 10, 0, 0));
+            JLabel vacio = new JLabel("<html><center>Sin archivos MP3.<br>Usa '+ MP3' o '+ Carpeta'</center></html>", SwingConstants.CENTER);
+            vacio.setForeground(colorTextoDim);
+            vacio.setFont(new Font("SansSerif", Font.PLAIN, 13));
+            vacio.setBorder(new EmptyBorder(40, 10, 0, 10));
+            vacio.setAlignmentX(Component.CENTER_ALIGNMENT);
             panelListaCanciones.add(vacio);
         }
 
@@ -377,7 +489,7 @@ public class MusicPlayer extends JFrame {
         for (CancionLocal c : listaFiltrada) {
             boolean esActual = (c == actual);
 
-            JPanel fila = new JPanel(new BorderLayout(14, 0)) {
+            JPanel fila = new JPanel(new BorderLayout(10, 0)) {
                 private boolean hover = false;
                 {
                     addMouseListener(new MouseAdapter() {
@@ -395,69 +507,74 @@ public class MusicPlayer extends JFrame {
                     Graphics2D g2 = (Graphics2D) g.create();
                     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                     if (esActual) {
-                        g2.setColor(new Color(250, 45, 72, 42));
-                        g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
+                        g2.setColor(new Color(250, 45, 72, modoOscuro ? 45 : 30));
+                        g2.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
                     } else if (hover) {
-                        g2.setColor(COLOR_TARJETA_HOVER);
-                        g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
+                        g2.setColor(colorTarjetaHover);
+                        g2.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
                     }
                     g2.dispose();
                 }
             };
             fila.setOpaque(false);
-            fila.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60));
-            fila.setBorder(new EmptyBorder(8, 12, 8, 14));
+            fila.setMaximumSize(new Dimension(Integer.MAX_VALUE, 52));
+            fila.setBorder(new EmptyBorder(6, 8, 6, 10));
             fila.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
+            // Miniatura redondeada
             JPanel badge = new JPanel() {
                 @Override
                 protected void paintComponent(Graphics g) {
                     Graphics2D g2 = (Graphics2D) g.create();
                     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                    g2.setPaint(new GradientPaint(0, 0, c.colorPrimario, 42, 42, c.colorSecundario));
-                    g2.fillRoundRect(0, 0, 42, 42, 10, 10);
+                    g2.setPaint(new GradientPaint(0, 0, c.colorPrimario, 36, 36, c.colorSecundario));
+                    g2.fillRoundRect(0, 0, 36, 36, 9, 9);
                     g2.setColor(Color.WHITE);
-                    g2.setFont(new Font("SansSerif", Font.BOLD, 16));
-                    g2.drawString(esActual ? "🔊" : "♪", 13, 27);
+                    g2.setFont(new Font("SansSerif", Font.BOLD, 14));
+                    g2.drawString(esActual ? "🔊" : "♪", 11, 23);
                     g2.dispose();
                 }
             };
-            badge.setPreferredSize(new Dimension(42, 42));
+            badge.setPreferredSize(new Dimension(36, 36));
             badge.setOpaque(false);
             fila.add(badge, BorderLayout.WEST);
 
+            // Título + Artista
             JPanel textos = new JPanel();
             textos.setLayout(new BoxLayout(textos, BoxLayout.Y_AXIS));
             textos.setOpaque(false);
 
             JLabel lblTit = new JLabel(c.titulo);
-            lblTit.setForeground(esActual ? COLOR_ROSA_APPLE : COLOR_TEXTO);
-            lblTit.setFont(new Font("SansSerif", Font.BOLD, 14));
+            lblTit.setForeground(esActual ? COLOR_ROSA_APPLE : colorTexto);
+            lblTit.setFont(new Font("SansSerif", Font.BOLD, 13));
 
-            JLabel lblSub = new JLabel(c.artista + "  •  " + c.tamanoMb);
-            lblSub.setForeground(COLOR_TEXTO_DIM);
-            lblSub.setFont(new Font("SansSerif", Font.PLAIN, 12));
+            JLabel lblSub = new JLabel(c.artista);
+            lblSub.setForeground(colorTextoDim);
+            lblSub.setFont(new Font("SansSerif", Font.PLAIN, 11));
 
             textos.add(Box.createVerticalGlue());
             textos.add(lblTit);
-            textos.add(Box.createVerticalStrut(3));
+            textos.add(Box.createVerticalStrut(2));
             textos.add(lblSub);
             textos.add(Box.createVerticalGlue());
             fila.add(textos, BorderLayout.CENTER);
 
             JLabel lblDur = new JLabel(formatearSegundos(c.duracionSegundosEstimada));
-            lblDur.setForeground(esActual ? COLOR_ROSA_APPLE : COLOR_TEXTO_DIM);
-            lblDur.setFont(new Font("SansSerif", Font.PLAIN, 12));
+            lblDur.setForeground(esActual ? COLOR_ROSA_APPLE : colorTextoDim);
+            lblDur.setFont(new Font("SansSerif", Font.PLAIN, 11));
             fila.add(lblDur, BorderLayout.EAST);
 
             panelListaCanciones.add(fila);
-            panelListaCanciones.add(Box.createVerticalStrut(4));
+            panelListaCanciones.add(Box.createVerticalStrut(3));
         }
 
         panelListaCanciones.revalidate();
         panelListaCanciones.repaint();
     }
 
+    // =========================================================================
+    // MOTOR DE REPRODUCCIÓN MP3 (JLayer)
+    // =========================================================================
     private void reproducirCancion(CancionLocal cancion) {
         detenerReproduccionTotal();
 
@@ -490,7 +607,6 @@ public class MusicPlayer extends JFrame {
                     @Override
                     public void playbackFinished(PlaybackEvent evt) {
                         if (pausado) {
-
                             framePausado += (int) ((System.currentTimeMillis() - inicioReproduccionMs) / 26.12);
                         } else if (reproduciendo) {
                             reproduciendo = false;
@@ -606,19 +722,21 @@ public class MusicPlayer extends JFrame {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(getModel().isRollover() ? bg.brighter() : bg);
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
+                Color base = getBackground() != null ? getBackground() : bg;
+                g2.setColor(getModel().isRollover() ? (modoOscuro ? base.brighter() : base.darker()) : base);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 14, 14);
                 super.paintComponent(g);
                 g2.dispose();
             }
         };
+        btn.setBackground(bg);
         btn.setForeground(fg);
-        btn.setFont(new Font("SansSerif", Font.BOLD, 12));
+        btn.setFont(new Font("SansSerif", Font.BOLD, 11));
         btn.setContentAreaFilled(false);
         btn.setBorderPainted(false);
         btn.setFocusPainted(false);
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btn.setBorder(new EmptyBorder(7, 14, 7, 14));
+        btn.setBorder(new EmptyBorder(6, 12, 6, 12));
         return btn;
     }
 
@@ -633,11 +751,13 @@ public class MusicPlayer extends JFrame {
         return btn;
     }
 
+    // =========================================================================
+    // MODELO DE CANCIÓN LOCAL MP3
+    // =========================================================================
     private static class CancionLocal {
         final File archivo;
         final String titulo;
         final String artista;
-        final String tamanoMb;
         final long duracionSegundosEstimada;
         final Color colorPrimario;
         final Color colorSecundario;
@@ -655,8 +775,6 @@ public class MusicPlayer extends JFrame {
                 this.artista = archivo.getParentFile() != null ? archivo.getParentFile().getName() : "Archivo Local";
             }
 
-            double mb = archivo.length() / (1024.0 * 1024.0);
-            this.tamanoMb = String.format("%.1f MB", mb);
             this.duracionSegundosEstimada = Math.max(1, archivo.length() / 24000L);
 
             Color[][] paletas = {
@@ -672,13 +790,16 @@ public class MusicPlayer extends JFrame {
         }
     }
 
-    private static class CaratulaPanel extends JPanel {
+    // =========================================================================
+    // COMPONENTES VISUALES PERSONALIZADOS (CARÁTULA CON SOMBRA, ECUALIZADOR, BARRA)
+    // =========================================================================
+    private class CaratulaPanel extends JPanel {
         private Color c1 = COLOR_ROSA_APPLE;
         private Color c2 = new Color(88, 86, 214);
 
         public CaratulaPanel() {
-            setPreferredSize(new Dimension(240, 240));
-            setMaximumSize(new Dimension(240, 240));
+            setPreferredSize(new Dimension(260, 260));
+            setMaximumSize(new Dimension(260, 260));
             setOpaque(false);
         }
 
@@ -694,22 +815,31 @@ public class MusicPlayer extends JFrame {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            int w = getWidth();
-            int h = getHeight();
-            g2.setClip(new RoundRectangle2D.Double(0, 0, w, h, 26, 26));
+            int pad = 12;
+            int w = getWidth() - pad * 2;
+            int h = getHeight() - pad * 2;
 
-            g2.setPaint(new GradientPaint(0, 0, c1, w, h, c2));
-            g2.fillRect(0, 0, w, h);
+            // Sombra ambiental suave estilo Apple Music
+            for (int i = 0; i < 6; i++) {
+                g2.setColor(new Color(c1.getRed(), c1.getGreen(), c1.getBlue(), modoOscuro ? 16 : 22));
+                g2.fillRoundRect(pad - i, pad + 6 + i, w + i * 2, h + i * 2, 32, 32);
+            }
 
-            g2.setColor(new Color(255, 255, 255, 220));
-            g2.setFont(new Font("SansSerif", Font.BOLD, 76));
+            g2.setClip(new RoundRectangle2D.Double(pad, pad, w, h, 28, 28));
+            g2.setPaint(new GradientPaint(pad, pad, c1, pad + w, pad + h, c2));
+            g2.fillRect(pad, pad, w, h);
+
+            // Brillo sutil superior tipo cristal
+            g2.setPaint(new GradientPaint(pad, pad, new Color(255, 255, 255, 55), pad, pad + h / 2, new Color(255, 255, 255, 0)));
+            g2.fillRect(pad, pad, w, h / 2);
+
+            g2.setColor(new Color(255, 255, 255, 235));
+            g2.setFont(new Font("SansSerif", Font.BOLD, 84));
             FontMetrics fm = g2.getFontMetrics();
             String nota = "♫";
-            g2.drawString(nota, (w - fm.stringWidth(nota)) / 2, ((h - fm.getHeight()) / 2) + fm.getAscent());
+            g2.drawString(nota, pad + (w - fm.stringWidth(nota)) / 2, pad + ((h - fm.getHeight()) / 2) + fm.getAscent());
 
             g2.setClip(null);
-            g2.setColor(new Color(255, 255, 255, 35));
-            g2.draw(new RoundRectangle2D.Double(0, 0, w - 1, h - 1, 26, 26));
             g2.dispose();
         }
     }
@@ -727,8 +857,8 @@ public class MusicPlayer extends JFrame {
                 alturas[i] = 0.12;
                 objetivos[i] = 0.12;
             }
-            setPreferredSize(new Dimension(300, 42));
-            setMaximumSize(new Dimension(300, 42));
+            setPreferredSize(new Dimension(360, 44));
+            setMaximumSize(new Dimension(360, 44));
             setOpaque(false);
         }
 
@@ -774,12 +904,12 @@ public class MusicPlayer extends JFrame {
         }
     }
 
-    private static class BarraProgresoAudio extends JPanel {
+    private class BarraProgresoAudio extends JPanel {
         private double progreso = 0;
 
         public BarraProgresoAudio() {
-            setPreferredSize(new Dimension(310, 14));
-            setMaximumSize(new Dimension(310, 14));
+            setPreferredSize(new Dimension(420, 16));
+            setMaximumSize(new Dimension(420, 16));
             setOpaque(false);
         }
 
@@ -798,7 +928,7 @@ public class MusicPlayer extends JFrame {
             int h = 6;
             int y = (getHeight() - h) / 2;
 
-            g2.setColor(new Color(55, 55, 62));
+            g2.setColor(colorPistaBarra);
             g2.fillRoundRect(0, y, w, h, h, h);
 
             int ancho = (int) (w * progreso);
@@ -807,9 +937,9 @@ public class MusicPlayer extends JFrame {
                 g2.fillRoundRect(0, y, ancho, h, h, h);
             }
 
-            int knobX = Math.max(0, Math.min(w - 12, ancho - 6));
-            g2.setColor(Color.WHITE);
-            g2.fillOval(knobX, (getHeight() - 12) / 2, 12, 12);
+            int knobX = Math.max(0, Math.min(w - 14, ancho - 7));
+            g2.setColor(modoOscuro ? Color.WHITE : COLOR_ROSA_APPLE);
+            g2.fillOval(knobX, (getHeight() - 14) / 2, 14, 14);
 
             g2.dispose();
         }
