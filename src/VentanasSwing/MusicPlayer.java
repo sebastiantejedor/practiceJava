@@ -17,9 +17,7 @@ import java.util.List;
 import java.util.Random;
 
 public class MusicPlayer extends JFrame {
-
     private static final Color COLOR_ROSA_APPLE = new Color(250, 45, 72);
-
     private boolean modoOscuro = true;
     private Color colorFondoCentral;
     private Color colorSidebar;
@@ -30,12 +28,10 @@ public class MusicPlayer extends JFrame {
     private Color colorTextoDim;
     private Color colorPistaBarra;
 
-    // Biblioteca local
     private final List<CancionLocal> biblioteca = new ArrayList<>();
     private final List<CancionLocal> listaFiltrada = new ArrayList<>();
     private int indiceActual = -1;
 
-    // Motor de reproducción MP3 (JLayer)
     private AdvancedPlayer reproductorMp3;
     private Thread hiloAudio;
     private boolean reproduciendo = false;
@@ -46,7 +42,6 @@ public class MusicPlayer extends JFrame {
     private long inicioReproduccionMs = 0;
     private long acumuladoMs = 0;
 
-    // Componentes UI
     private JPanel panelSidebar;
     private JPanel panelCentral;
     private JLabel lblTituloBiblio;
@@ -154,9 +149,6 @@ public class MusicPlayer extends JFrame {
         add(crearEscenarioCentral(), BorderLayout.CENTER);
     }
 
-    // =========================================================================
-    // PANEL IZQUIERDO: SIDEBAR COMPACTO CON BIBLIOTECA MP3
-    // =========================================================================
     private JPanel crearSidebarBiblioteca() {
         panelSidebar = new JPanel(new BorderLayout(0, 12));
         panelSidebar.setBackground(colorSidebar);
@@ -166,7 +158,6 @@ public class MusicPlayer extends JFrame {
                 new EmptyBorder(20, 16, 16, 16)
         ));
 
-        // Encabezado del Sidebar
         JPanel topSidebar = new JPanel();
         topSidebar.setLayout(new BoxLayout(topSidebar, BoxLayout.Y_AXIS));
         topSidebar.setOpaque(false);
@@ -195,7 +186,6 @@ public class MusicPlayer extends JFrame {
         filaTit.add(lblTituloBiblio, BorderLayout.WEST);
         filaTit.add(filaBotones, BorderLayout.EAST);
 
-        // Buscador estilo macOS
         JPanel cajaBusqueda = new JPanel(new BorderLayout(8, 0)) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -235,7 +225,6 @@ public class MusicPlayer extends JFrame {
 
         panelSidebar.add(topSidebar, BorderLayout.NORTH);
 
-        // Lista de pistas MP3
         panelListaCanciones = new JPanel();
         panelListaCanciones.setLayout(new BoxLayout(panelListaCanciones, BoxLayout.Y_AXIS));
         panelListaCanciones.setBackground(colorSidebar);
@@ -256,15 +245,11 @@ public class MusicPlayer extends JFrame {
         return panelSidebar;
     }
 
-    // =========================================================================
-    // ESCENARIO CENTRAL: REPRODUCTOR PROTAGONISTA CENTRADO
-    // =========================================================================
     private JPanel crearEscenarioCentral() {
         panelCentral = new JPanel(new BorderLayout());
         panelCentral.setBackground(colorFondoCentral);
         panelCentral.setBorder(new EmptyBorder(20, 32, 28, 32));
 
-        // Barra superior con indicador "Reproduciendo ahora" y botón de Tema Claro/Oscuro
         JPanel barraSuperior = new JPanel(new BorderLayout());
         barraSuperior.setOpaque(false);
 
@@ -279,26 +264,22 @@ public class MusicPlayer extends JFrame {
         barraSuperior.add(btnTema, BorderLayout.EAST);
         panelCentral.add(barraSuperior, BorderLayout.NORTH);
 
-        // Contenedor perfectamente centrado para Carátula + Info + Controles
         JPanel centroHero = new JPanel();
         centroHero.setLayout(new BoxLayout(centroHero, BoxLayout.Y_AXIS));
         centroHero.setOpaque(false);
 
         centroHero.add(Box.createVerticalGlue());
 
-        // 1. Carátula grande protagonista con sombra realista
         panelCaratula = new CaratulaPanel();
         panelCaratula.setAlignmentX(Component.CENTER_ALIGNMENT);
         centroHero.add(panelCaratula);
         centroHero.add(Box.createVerticalStrut(22));
 
-        // 2. Ecualizador espectral centrado
         ecualizador = new EcualizadorPanel(32);
         ecualizador.setAlignmentX(Component.CENTER_ALIGNMENT);
         centroHero.add(ecualizador);
         centroHero.add(Box.createVerticalStrut(18));
 
-        // 3. Título y Artista centrados
         lblTituloActual = new JLabel("Selecciona una canción");
         lblTituloActual.setForeground(colorTexto);
         lblTituloActual.setFont(new Font("SansSerif", Font.BOLD, 24));
@@ -314,7 +295,6 @@ public class MusicPlayer extends JFrame {
         centroHero.add(lblArtistaActual);
         centroHero.add(Box.createVerticalStrut(22));
 
-        // 4. Barra de progreso ancha y tiempos
         barraProgreso = new BarraProgresoAudio();
         barraProgreso.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -337,7 +317,6 @@ public class MusicPlayer extends JFrame {
         centroHero.add(filaTiempos);
         centroHero.add(Box.createVerticalStrut(20));
 
-        // 5. Botonera de control centrada
         JPanel controles = new JPanel(new FlowLayout(FlowLayout.CENTER, 22, 0));
         controles.setOpaque(false);
         controles.setMaximumSize(new Dimension(440, 74));
@@ -395,9 +374,6 @@ public class MusicPlayer extends JFrame {
         return panelCentral;
     }
 
-    // =========================================================================
-    // GESTIÓN DE ARCHIVOS LOCALES MP3
-    // =========================================================================
     private void cargarCarpetaMusicaPorDefecto() {
         File carpetaMusica = new File(System.getProperty("user.home"), "Music");
         if (!carpetaMusica.exists()) {
@@ -539,7 +515,6 @@ public class MusicPlayer extends JFrame {
             badge.setOpaque(false);
             fila.add(badge, BorderLayout.WEST);
 
-            // Título + Artista
             JPanel textos = new JPanel();
             textos.setLayout(new BoxLayout(textos, BoxLayout.Y_AXIS));
             textos.setOpaque(false);
@@ -572,9 +547,6 @@ public class MusicPlayer extends JFrame {
         panelListaCanciones.repaint();
     }
 
-    // =========================================================================
-    // MOTOR DE REPRODUCCIÓN MP3 (JLayer)
-    // =========================================================================
     private void reproducirCancion(CancionLocal cancion) {
         detenerReproduccionTotal();
 
@@ -751,9 +723,6 @@ public class MusicPlayer extends JFrame {
         return btn;
     }
 
-    // =========================================================================
-    // MODELO DE CANCIÓN LOCAL MP3
-    // =========================================================================
     private static class CancionLocal {
         final File archivo;
         final String titulo;
@@ -790,9 +759,6 @@ public class MusicPlayer extends JFrame {
         }
     }
 
-    // =========================================================================
-    // COMPONENTES VISUALES PERSONALIZADOS (CARÁTULA CON SOMBRA, ECUALIZADOR, BARRA)
-    // =========================================================================
     private class CaratulaPanel extends JPanel {
         private Color c1 = COLOR_ROSA_APPLE;
         private Color c2 = new Color(88, 86, 214);
@@ -819,7 +785,6 @@ public class MusicPlayer extends JFrame {
             int w = getWidth() - pad * 2;
             int h = getHeight() - pad * 2;
 
-            // Sombra ambiental suave estilo Apple Music
             for (int i = 0; i < 6; i++) {
                 g2.setColor(new Color(c1.getRed(), c1.getGreen(), c1.getBlue(), modoOscuro ? 16 : 22));
                 g2.fillRoundRect(pad - i, pad + 6 + i, w + i * 2, h + i * 2, 32, 32);
@@ -829,7 +794,6 @@ public class MusicPlayer extends JFrame {
             g2.setPaint(new GradientPaint(pad, pad, c1, pad + w, pad + h, c2));
             g2.fillRect(pad, pad, w, h);
 
-            // Brillo sutil superior tipo cristal
             g2.setPaint(new GradientPaint(pad, pad, new Color(255, 255, 255, 55), pad, pad + h / 2, new Color(255, 255, 255, 0)));
             g2.fillRect(pad, pad, w, h / 2);
 
